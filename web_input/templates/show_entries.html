@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block body %}
+  <form action="{{ url_for('add_entry') }}" method=post
+        class=add-entry>
+    <dl>
+      <dt>Date (yyyy-mm-dd):
+      <dd><input type=text size=30 name=date>
+      <dt>Duration (hh:mm:ss):
+      <dd><input type=text size=30 name=duration>
+      <dt>Distance (km):
+      <dd><input type=text size=30 name=distance>
+      <dd><input type=submit value=Submit>
+    </dl>
+  </form>
+
+<ul class=entries>
+  {% for entry in entries %}
+    <li>{{ entry.date }}, {{ entry.duration }}, {{ entry.distance
+    }}
+    
+  {% else %}
+    <li><em>No entries.</em>
+  {% endfor %}
+</ul>
+{% endblock %}
