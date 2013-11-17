@@ -33,10 +33,40 @@ def date_validator(date_string):
     
 
 def duration_validator(duration_string):
-    True
+    split_duration = duration_string.split(":")
+    split_length = split_duration.__len__()
+    # test for to disregard durations with too many colons
+    if split_length>=4 :
+        return False
+    accumulator = 0
+    for index in range(split_length):
+        # has to be a valid number
+        try:
+            index_value = float(split_duration[index])
+        except:
+            return False
+
+        accumulator = accumulator*60+index_value
+
+        # no negative times
+        if index_value < 0:
+            return False
+        # no seconds or minutes >=60 if a higher unit is in use
+        elif (index>0) & (index_value >=60) & (accumulator != 0):
+            return False
+        # at the seconds column/end of the calculation
+        elif index == split_length-1:
+            # can't have a duration equal to zero
+            if accumulator == 0:
+                return False
+            else:
+                return True
+        # can't have decimal places except to specify seconds.
+        elif (index<split_length-1) & (accumulator%1 != 0):
+            return False
 
 def distance_validator(distance_string):
-    True
+    return True
 
 @app.before_request
 def before_request():
