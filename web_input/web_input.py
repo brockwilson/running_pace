@@ -28,8 +28,7 @@ def date_validator(date_string):
         date = datetime.datetime.strptime(date_string, '%Y-%m-%d')
         return (date>=MINIMUM_DATE) & (date<=datetime.datetime.today())
     except ValueError:
-        # Make this more useful
-        raise ValueError("Incorrect data format, should be YYYY-MM-DD.")
+        return False
     
 
 def duration_validator(duration_string):
@@ -60,7 +59,7 @@ def duration_validator(duration_string):
             if accumulator == 0:
                 return False
             else:
-                return True
+                return accumulator
         # can't have decimal places except to specify seconds.
         elif (index<split_length-1) & (accumulator%1 != 0):
             return False
@@ -89,9 +88,10 @@ def add_entry():
     # need to add some data validation here
     date = request.form['date']
     duration = request.form['duration']
+    validated_duration = duration_validator(duration)
     distance = request.form['distance']
-    if date_validator(date):
-        g.db.execute('insert into entries (date, duration, distance) values (?, ?, ?)', [date, duration, distance])
+    if date_validator(date) & bool(validated_duration):
+        g.db.execute('insert into entries (date, duration, distance) values (?, ?, ?)', [date, validated_duration, distance])
         g.db.commit()
         flash('New entry was successfully posted')
     else:
